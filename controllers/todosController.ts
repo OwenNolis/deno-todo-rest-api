@@ -1,7 +1,7 @@
 import { RouterContext } from "https://deno.land/x/oak@v12.6.1/mod.ts";
 import { Todo } from "../models/todo.ts";
 
-let todos: Todo[] = [
+const todos: Todo[] = [
   { id: "1", text: "Leer Deno" },
   { id: "2", text: "Maak demo project" },
 ];
@@ -23,7 +23,10 @@ export const addTodo = async (ctx: RouterContext<"/todos">) => {
 
 export const deleteTodo = (ctx: RouterContext<"/todos/:id">) => {
   const id = ctx.params.id;
-  todos = todos.filter((todo) => todo.id !== id);
+  const index = todos.findIndex((todo) => todo.id === id);
+  if (index > -1) {
+    todos.splice(index, 1);
+  }
   ctx.response.body = { message: `Todo met id ${id} verwijderd` };
 };
 
