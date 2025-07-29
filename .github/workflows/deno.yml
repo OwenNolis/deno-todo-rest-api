@@ -38,5 +38,14 @@ jobs:
       - name: Run linter
         run: deno lint
 
+      - name: Debug - List files
+        run: |
+          echo "Current directory:"
+          pwd
+          echo "All files:"
+          find . -type f -name "*.ts" | head -20
+          echo "Test files:"
+          find . -name "*test*" -o -name "*Test*"
+
       - name: Run tests
         run: deno test -A
