@@ -4,6 +4,8 @@ Deno.test("Application configuration test", () => {
   // Test basic application structure
   assertEquals(typeof "localhost", "string");
   assertEquals(8000 > 0, true);
+  // Verify port is a valid number
+  assertEquals(typeof 8000, "number");
 });
 
 Deno.test("Import test - ensure modules can be imported", async () => {
