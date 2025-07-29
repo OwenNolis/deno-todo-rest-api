@@ -1,0 +1,20 @@
+body {
+  font-family: sans-serif;
+  margin: 2rem;
+}
+
+input {
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+
+button {
+  margin-left: 5px;
+  padding: 0.3rem 0.5rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+li {
+  margin-bottom: 0.5rem;
+}
