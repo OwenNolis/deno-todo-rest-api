@@ -18,7 +18,7 @@ A simple REST API for managing todos built with Deno.
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/deno-todo-rest-api.git
+git clone https://github.com/OwenNolis/deno-todo-rest-api.git
 cd deno-todo-rest-api
 ```
 
