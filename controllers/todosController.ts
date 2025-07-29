@@ -1,51 +1,73 @@
-import { RouterContext } from "https://deno.land/x/oak@v12.6.1/mod.ts";
+import { Context, RouterContext } from "https://deno.land/x/oak@v12.6.1/mod.ts";
 import { Todo } from "../models/todo.ts";
 
-const todos: Todo[] = [
-  { id: "1", text: "Leer Deno" },
-  { id: "2", text: "Maak demo project" },
-];
+const FILE_PATH = "./todos.json";
 
-export const getTodos = (ctx: RouterContext<"/todos">) => {
+let todos: Todo[] = [];
+
+// 🟡 Hulpfuncties
+async function loadTodos() {
+  try {
+    const data = await Deno.readTextFile(FILE_PATH);
+    todos = JSON.parse(data);
+  } catch {
+    todos = [];
+  }
+}
+
+async function saveTodos() {
+  await Deno.writeTextFile(FILE_PATH, JSON.stringify(todos, null, 2));
+}
+
+// 🟢 GET
+export const getTodos = async (ctx: Context) => {
+  await loadTodos();
   ctx.response.body = { todos };
 };
 
-export const addTodo = async (ctx: RouterContext<"/todos">) => {
+// 🟢 POST
+export const addTodo = async (ctx: Context) => {
   const body = await ctx.request.body({ type: "json" }).value;
   const newTodo: Todo = {
     id: crypto.randomUUID(),
     text: body.text,
   };
+
+  await loadTodos();
   todos.push(newTodo);
+  await saveTodos();
+
   ctx.response.status = 201;
   ctx.response.body = { message: "Todo toegevoegd", todo: newTodo };
 };
 
-export const deleteTodo = (ctx: RouterContext<"/todos/:id">) => {
+// 🔴 DELETE
+export const deleteTodo = async (ctx: RouterContext<"/todos/:id">) => {
   const id = ctx.params.id;
-  const index = todos.findIndex((todo) => todo.id === id);
-  if (index > -1) {
-    todos.splice(index, 1);
-  }
+  await loadTodos();
+
+  todos = todos.filter((todo) => todo.id !== id);
+  await saveTodos();
+
   ctx.response.body = { message: `Todo met id ${id} verwijderd` };
 };
 
+// ✏️ PUT (Update)
 export const updateTodo = async (ctx: RouterContext<"/todos/:id">) => {
   const id = ctx.params.id;
   const body = await ctx.request.body({ type: "json" }).value;
 
-  const todo = todos.find((t) => t.id === id);
+  await loadTodos();
 
-  if (!todo) {
+  const index = todos.findIndex((t) => t.id === id);
+  if (index === -1) {
     ctx.response.status = 404;
     ctx.response.body = { message: "Todo niet gevonden" };
     return;
   }
 
-  todo.text = body.text ?? todo.text;
+  todos[index].text = body.text;
+  await saveTodos();
 
-  ctx.response.body = {
-    message: `Todo met id ${id} geüpdatet`,
-    todo,
-  };
+  ctx.response.body = { message: "Todo bijgewerkt", todo: todos[index] };
 };
