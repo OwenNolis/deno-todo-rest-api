@@ -27,6 +27,17 @@ cd deno-todo-rest-api
 deno run --allow-net --allow-read --allow-write main.ts
 ```
 
+3. Enable Deno in project
+
+Make in the root a .vscode/settings.json file
+```bash
+{
+  "deno.enable": true,
+  "deno.lint": true,
+  "deno.unstable": false
+}
+```
+
 ## API Endpoints
 
 - `GET /todos` - Get all todos
